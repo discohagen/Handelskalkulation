@@ -14,7 +14,6 @@
             name="kalkulation"
             id="vorwaertskalkulationOption"
             value="vorwaertskalkulation"
-            checked
         />
         <label for="vorwaertskalkulation"
             >Vorwärtskalkulation</label
@@ -24,11 +23,12 @@
             name="kalkulation"
             id="rueckwaertskalkulationOption"
             value="rueckwaertskalkulation"
+            checked
         />
         <label for="rueckwaertskalkulation"
             >Rückwärtskalkulation</label
         >
-        <div id="vorwaertskalkulation">
+        <div id="vorwaertskalkulation" hidden>
             <table id="vorwaertskalkulationstabelle">
                 <tr>
                     <th></th>
@@ -38,7 +38,16 @@
                 </tr>
             </table>
         </div>
-        <div id="rueckwaertskalkulation" hidden>hallo</div>
+        <div id="rueckwaertskalkulation">
+            <table id="rueckwaertskalkulationstabelle">
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>in %</th>
+                    <th>in €</th>
+                </tr>
+            </table>
+        </div>
         <script src="script.js"></script>
     </body>
 </html>
