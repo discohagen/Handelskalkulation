@@ -9,16 +9,36 @@
         <title>Handelskalkulation</title>
     </head>
     <body>
+        <input
+            type="radio"
+            name="kalkulation"
+            id="vorwaertskalkulationOption"
+            value="vorwaertskalkulation"
+            checked
+        />
+        <label for="vorwaertskalkulation"
+            >Vorwärtskalkulation</label
+        >
+        <input
+            type="radio"
+            name="kalkulation"
+            id="rueckwaertskalkulationOption"
+            value="rueckwaertskalkulation"
+        />
+        <label for="rueckwaertskalkulation"
+            >Rückwärtskalkulation</label
+        >
         <div id="vorwaertskalkulation">
             <table id="vorwaertskalkulationstabelle">
                 <tr>
                     <th></th>
-                    <th>Vorwärtskalkulation</th>
+                    <th></th>
                     <th>in %</th>
                     <th>in €</th>
                 </tr>
             </table>
         </div>
+        <div id="rueckwaertskalkulation" hidden>hallo</div>
         <script src="script.js"></script>
     </body>
 </html>

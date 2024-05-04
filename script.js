@@ -1,248 +1,324 @@
-let calculations = [
-    { sign: '', label: 'Listeneinkaufspreis (netto)' },
-    { sign: '-', label: 'Lieferrabatt' },
-    { sign: '=', label: 'Zieleinkaufspreis' },
-    { sign: '-', label: 'Lieferskonto' },
-    { sign: '=', label: 'Bareinkaufspreis' },
-    { sign: '+', label: 'Bezugskosten' },
-    { sign: '=', label: 'Bezugspreis' },
-    { sign: '+', label: 'Handlungskostenzuschlag' },
-    { sign: '=', label: 'Selbstkosten' },
-    { sign: '+', label: 'Gewinnzuschlag' },
-    { sign: '=', label: 'Barverkaufspreis' },
-    { sign: '+', label: 'Kundenskonto' },
-    { sign: '=', label: 'Zielverkaufspreis' },
-    { sign: '+', label: 'Kundenrabatt' },
-    { sign: '=', label: 'Listenverkaufspreis (netto)' },
-    { sign: '+', label: 'Mehrwertsteuer' },
-    { sign: '=', label: 'Listenverkaufspreis (brutto)' },
+// Global Constants
+
+const signsForward = [
+    '',
+    '-',
+    '=',
+    '-',
+    '=',
+    '+',
+    '=',
+    '+',
+    '=',
+    '+',
+    '=',
+    '+',
+    '=',
+    '+',
+    '=',
+    '+',
+    '=',
 ];
 
-let table = document.getElementById(
-    'vorwaertskalkulationstabelle'
-);
+const signsBackward = [];
 
-for (let i = 0; i < calculations.length; i++) {
-    let row = table.insertRow();
-    let cell1 = row.insertCell(0);
-    let cell2 = row.insertCell(1);
-    let cell3 = row.insertCell(2);
-    let cell4 = row.insertCell(3);
+const calculationSteps = [
+    'Listeneinkaufspreis (netto)',
+    'Lieferrabatt',
+    'Zieleinkaufspreis',
+    'Lieferskonto',
+    'Bareinkaufspreis',
+    'Bezugskosten',
+    'Bezugspreis',
+    'Handlungskostenzuschlag',
+    'Selbstkosten',
+    'Gewinnzuschlag',
+    'Barverkaufspreis',
+    'Kundenskonto',
+    'Zielverkaufspreis',
+    'Kundenrabatt',
+    'Listenverkaufspreis (netto)',
+    'Mehrwertsteuer',
+    'Listenverkaufspreis (brutto)',
+];
 
-    cell1.innerHTML = calculations[i].sign;
-    cell2.innerHTML = calculations[i].label;
+// Event Listeners
 
-    let input1 = document.createElement('input');
-    input1.type = 'number';
-    input1.min = 0;
-    input1.max = 100;
-    input1.id = `row${i}col2`;
-    cell3.appendChild(input1);
+document
+    .getElementById('vorwaertskalkulationOption')
+    .addEventListener(
+        'change',
+        toggleCalculationDirectionChange
+    );
 
-    let input2 = document.createElement('input');
-    input2.type = 'number';
-    input2.min = 0;
-    input2.id = `row${i}col3`;
-    cell4.appendChild(input2);
-}
+document
+    .getElementById('rueckwaertskalkulationOption')
+    .addEventListener(
+        'change',
+        toggleCalculationDirectionChange
+    );
+
+// Loading HTML Elements
+
+loadForwardCalculation();
+loadBackwardCalculation();
 
 setInterval(() => {
-    document.getElementById('row0col2').disabled = true;
-
-    lieferrabattBetrag =
-        document.getElementById('row1col3');
-    lieferrabattBetrag.value =
-        Math.round(
-            (100 *
-                (document.getElementById('row1col2').value *
-                    document.getElementById('row0col3')
-                        .value)) /
-                100
-        ) / 100;
-    lieferrabattBetrag.disabled = true;
-
-    document.getElementById('row2col2').disabled = true;
-
-    zieleinkaufspreis = document.getElementById('row2col3');
-    zieleinkaufspreis.value =
-        Math.round(
-            100 *
-                (document.getElementById('row0col3').value -
-                    document.getElementById('row1col3')
-                        .value)
-        ) / 100;
-    zieleinkaufspreis.disabled = true;
-
-    lieferskontoBetrag =
-        document.getElementById('row3col3');
-    lieferskontoBetrag.value =
-        Math.round(
-            (100 *
-                (document.getElementById('row3col2').value *
-                    document.getElementById('row2col3')
-                        .value)) /
-                100
-        ) / 100;
-    lieferskontoBetrag.disabled = true;
-
-    document.getElementById('row4col2').disabled = true;
-
-    bareinkaufspreis = document.getElementById('row4col3');
-    bareinkaufspreis.value =
-        Math.round(
-            100 *
-                (document.getElementById('row2col3').value -
-                    document.getElementById('row3col3')
-                        .value)
-        ) / 100;
-    bareinkaufspreis.disabled = true;
-
-    document.getElementById('row5col2').disabled = true;
-
-    document.getElementById('row6col2').disabled = true;
-
-    bezugspreis = document.getElementById('row6col3');
-    bezugspreis.value =
-        Math.round(
-            100 *
-                (Number(
-                    document.getElementById('row4col3')
-                        .value
-                ) +
-                    Number(
-                        document.getElementById('row5col3')
-                            .value
-                    ))
-        ) / 100;
-    bezugspreis.disabled = true;
-
-    handlungskostenzuschlagBetrag =
-        document.getElementById('row7col3');
-    handlungskostenzuschlagBetrag.value =
-        Math.round(
-            (100 *
-                (document.getElementById('row7col2').value *
-                    document.getElementById('row6col3')
-                        .value)) /
-                100
-        ) / 100;
-    handlungskostenzuschlagBetrag.disabled = true;
-
-    document.getElementById('row8col2').disabled = true;
-
-    selbstkosten = document.getElementById('row8col3');
-    selbstkosten.value =
-        Math.round(
-            100 *
-                (Number(
-                    document.getElementById('row6col3')
-                        .value
-                ) +
-                    Number(
-                        document.getElementById('row7col3')
-                            .value
-                    ))
-        ) / 100;
-    selbstkosten.disabled = true;
-
-    gewinnzuschlagBetrag =
-        document.getElementById('row9col3');
-    gewinnzuschlagBetrag.value =
-        Math.round(
-            (100 *
-                (document.getElementById('row9col2').value *
-                    document.getElementById('row8col3')
-                        .value)) /
-                100
-        ) / 100;
-    gewinnzuschlagBetrag.disabled = true;
-
-    document.getElementById('row10col2').disabled = true;
-
-    barverkaufspreis = document.getElementById('row10col3');
-    barverkaufspreis.value =
-        Math.round(
-            100 *
-                (Number(
-                    document.getElementById('row8col3')
-                        .value
-                ) +
-                    Number(
-                        document.getElementById('row9col3')
-                            .value
-                    ))
-        ) / 100;
-    barverkaufspreis.disabled = true;
-
-    kundenskonto = document.getElementById('row11col2');
-
-    kundenskontoBetrag =
-        document.getElementById('row11col3');
-    kundenskontoBetrag.value =
-        Math.round(
-            (100 *
-                (kundenskonto.value *
-                    barverkaufspreis.value)) /
-                (100 - kundenskonto.value)
-        ) / 100;
-    kundenskontoBetrag.disabled = true;
-
-    document.getElementById('row12col2').disabled = true;
-
-    zielverkaufspreis =
-        document.getElementById('row12col3');
-    zielverkaufspreis.value =
-        Math.round(
-            (100 * (100 * barverkaufspreis.value)) /
-                (100 - kundenskonto.value)
-        ) / 100;
-    zielverkaufspreis.disabled = true;
-
-    kundenrabatt = document.getElementById('row13col2');
-
-    kundenrabattBetrag =
-        document.getElementById('row13col3');
-    kundenrabattBetrag.value =
-        Math.round(
-            (100 *
-                (kundenrabatt.value *
-                    zielverkaufspreis.value)) /
-                (100 - kundenrabatt.value)
-        ) / 100;
-    kundenrabattBetrag.disabled = true;
-
-    document.getElementById('row14col2').disabled = true;
-
-    listenverkaufspreisNetto =
-        document.getElementById('row14col3');
-    listenverkaufspreisNetto.value =
-        Math.round(
-            (100 * (100 * zielverkaufspreis.value)) /
-                (100 - kundenrabatt.value)
-        ) / 100;
-    listenverkaufspreisNetto.disabled = true;
-
-    mehrwertsteuerBetrag =
-        document.getElementById('row15col3');
-    mehrwertsteuerBetrag.value =
-        Math.round(
-            (100 *
-                (document.getElementById('row15col2')
-                    .value *
-                    listenverkaufspreisNetto.value)) /
-                100
-        ) / 100;
-    mehrwertsteuerBetrag.disabled = true;
-
-    document.getElementById('row16col2').disabled = true;
-
-    listenverkaufspreisBrutto =
-        document.getElementById('row16col3');
-    listenverkaufspreisBrutto.value =
-        Math.round(
-            100 *
-                (Number(listenverkaufspreisNetto.value) +
-                    Number(mehrwertsteuerBetrag.value))
-        ) / 100;
-    listenverkaufspreisBrutto.disabled = true;
+    forwardCalculation();
+    backwardCalculation();
 }, 100);
+
+// Functions
+
+function toggleCalculationDirectionChange() {
+    document.getElementById('vorwaertskalkulation').hidden =
+        !document.getElementById('vorwaertskalkulation')
+            .hidden;
+    document.getElementById(
+        'rueckwaertskalkulation'
+    ).hidden = !document.getElementById(
+        'rueckwaertskalkulation'
+    ).hidden;
+}
+
+function loadForwardCalculation() {
+    const forwardCalculationTable = document.getElementById(
+        'vorwaertskalkulationstabelle'
+    );
+
+    for (let i = 0; i < calculationSteps.length; i++) {
+        let row = forwardCalculationTable.insertRow();
+        let cell1 = row.insertCell(0);
+        let cell2 = row.insertCell(1);
+        let cell3 = row.insertCell(2);
+        let cell4 = row.insertCell(3);
+
+        cell1.innerHTML = signsForward[i];
+        cell2.innerHTML = calculationSteps[i];
+
+        let input1 = document.createElement('input');
+        input1.type = 'number';
+        input1.min = 0;
+        input1.max = 100;
+        input1.id = `${calculationSteps[i].replace(
+            /\s/g,
+            ''
+        )}Percentage`;
+        cell3.appendChild(input1);
+
+        let input2 = document.createElement('input');
+        input2.type = 'number';
+        input2.min = 0;
+        input2.id = `${calculationSteps[i].replace(
+            /\s/g,
+            ''
+        )}Amount`;
+        cell4.appendChild(input2);
+    }
+
+    disableElements([
+        'Listeneinkaufspreis(netto)Percentage',
+        'LieferrabattAmount',
+        'ZieleinkaufspreisPercentage',
+        'ZieleinkaufspreisAmount',
+        'LieferskontoAmount',
+        'BareinkaufspreisPercentage',
+        'BareinkaufspreisAmount',
+        'BezugskostenPercentage',
+        'BezugspreisPercentage',
+        'BezugspreisAmount',
+        'HandlungskostenzuschlagAmount',
+        'SelbstkostenPercentage',
+        'SelbstkostenAmount',
+        'GewinnzuschlagAmount',
+        'BarverkaufspreisPercentage',
+        'BarverkaufspreisAmount',
+        'KundenskontoAmount',
+        'ZielverkaufspreisPercentage',
+        'ZielverkaufspreisAmount',
+        'KundenrabattAmount',
+        'Listenverkaufspreis(netto)Percentage',
+        'Listenverkaufspreis(netto)Amount',
+        'MehrwertsteuerAmount',
+        'Listenverkaufspreis(brutto)Percentage',
+        'Listenverkaufspreis(brutto)Amount',
+    ]);
+}
+
+// ToDo
+function loadBackwardCalculation() {}
+
+function forwardCalculation() {
+    document.getElementById('LieferrabattAmount').value =
+        calculatePercentageOfAmount(
+            'Listeneinkaufspreis(netto)Amount',
+            'LieferrabattPercentage'
+        );
+
+    document.getElementById(
+        'ZieleinkaufspreisAmount'
+    ).value = subtractValues(
+        'Listeneinkaufspreis(netto)Amount',
+        'LieferrabattAmount'
+    );
+
+    document.getElementById('LieferskontoAmount').value =
+        calculatePercentageOfAmount(
+            'ZieleinkaufspreisAmount',
+            'LieferskontoPercentage'
+        );
+
+    document.getElementById(
+        'BareinkaufspreisAmount'
+    ).value = subtractValues(
+        'ZieleinkaufspreisAmount',
+        'LieferskontoAmount'
+    );
+
+    document.getElementById('BezugspreisAmount').value =
+        addValues(
+            'BareinkaufspreisAmount',
+            'BezugskostenAmount'
+        );
+
+    document.getElementById(
+        'HandlungskostenzuschlagAmount'
+    ).value = calculatePercentageOfAmount(
+        'BezugspreisAmount',
+        'HandlungskostenzuschlagPercentage'
+    );
+
+    document.getElementById('SelbstkostenAmount').value =
+        addValues(
+            'BezugspreisAmount',
+            'HandlungskostenzuschlagAmount'
+        );
+
+    document.getElementById('GewinnzuschlagAmount').value =
+        calculatePercentageOfAmount(
+            'SelbstkostenAmount',
+            'GewinnzuschlagPercentage'
+        );
+
+    document.getElementById(
+        'BarverkaufspreisAmount'
+    ).value = addValues(
+        'SelbstkostenAmount',
+        'GewinnzuschlagAmount'
+    );
+
+    document.getElementById('KundenskontoAmount').value =
+        calculatePercentageOfAmountCustomerPerspective(
+            'BarverkaufspreisAmount',
+            'KundenskontoPercentage'
+        );
+
+    document.getElementById(
+        'ZielverkaufspreisAmount'
+    ).value = addValues(
+        'BarverkaufspreisAmount',
+        'KundenskontoAmount'
+    );
+
+    document.getElementById('KundenrabattAmount').value =
+        calculatePercentageOfAmountCustomerPerspective(
+            'ZielverkaufspreisAmount',
+            'KundenrabattPercentage'
+        );
+
+    document.getElementById(
+        'Listenverkaufspreis(netto)Amount'
+    ).value = addValues(
+        'ZielverkaufspreisAmount',
+        'KundenrabattAmount'
+    );
+
+    document.getElementById('MehrwertsteuerAmount').value =
+        calculatePercentageOfAmount(
+            'Listenverkaufspreis(netto)Amount',
+            'MehrwertsteuerPercentage'
+        );
+
+    document.getElementById(
+        'Listenverkaufspreis(brutto)Amount'
+    ).value = addValues(
+        'Listenverkaufspreis(netto)Amount',
+        'MehrwertsteuerAmount'
+    );
+}
+
+// ToDo
+function backwardCalculation() {}
+
+function disableElements(elementIds) {
+    elementIds.forEach((elementId) => {
+        element = document.getElementById(elementId);
+        element.disabled = true;
+    });
+}
+
+function calculatePercentageOfAmount(
+    amountElementId,
+    percentageElementId
+) {
+    return (
+        Math.round(
+            document.getElementById(amountElementId).value *
+                document.getElementById(percentageElementId)
+                    .value
+        ) / 100
+    );
+}
+
+function subtractValues(
+    amountElementId1,
+    amountElementId2
+) {
+    return (
+        Math.round(
+            100 *
+                (document.getElementById(amountElementId1)
+                    .value -
+                    document.getElementById(
+                        amountElementId2
+                    ).value)
+        ) / 100
+    );
+}
+
+function addValues(amountElementId1, amountElementId2) {
+    return (
+        Math.round(
+            100 *
+                (Number(
+                    document.getElementById(
+                        amountElementId1
+                    ).value
+                ) +
+                    Number(
+                        document.getElementById(
+                            amountElementId2
+                        ).value
+                    ))
+        ) / 100
+    );
+}
+
+function calculatePercentageOfAmountCustomerPerspective(
+    amountElementId,
+    percentageElementId
+) {
+    return (
+        Math.round(
+            (100 *
+                document.getElementById(percentageElementId)
+                    .value *
+                document.getElementById(amountElementId)
+                    .value) /
+                (100 -
+                    document.getElementById(
+                        percentageElementId
+                    ).value)
+        ) / 100
+    );
+}
